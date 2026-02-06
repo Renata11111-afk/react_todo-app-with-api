@@ -23,7 +23,6 @@ export const TodoList: React.FC<Props> = ({
     return null;
   }
 
-
   return (
     <section className="todoapp__main" data-cy="TodoList">
       {todos.map(todo => (

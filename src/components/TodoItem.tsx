@@ -56,8 +56,7 @@ export const TodoItem: React.FC<Props> = ({
         setIsTodoEditing(false);
       })
       .catch(() => {
-
-        inputRef.current?.focus()
+        inputRef.current?.focus();
       });
   };
 
@@ -133,6 +132,6 @@ export const TodoItem: React.FC<Props> = ({
         <div className="modal-background has-background-white-ter" />
         <div className="loader" />
       </div>
-    </div >
+    </div>
   );
 };

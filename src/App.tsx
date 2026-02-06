@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import { UserWarning } from './UserWarning';
-import { USER_ID, addTodo, deleteTodo, getTodos, updateTodo } from './api/todos';
+import {
+  USER_ID,
+  addTodo,
+  deleteTodo,
+  getTodos,
+  updateTodo,
+} from './api/todos';
 import { Todo } from './types/Todo';
 import { Filter } from './types/Filter';
 import { ErrorMessage } from './types/ErrorMessage';
@@ -33,11 +39,13 @@ export const App: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const filteredTodos = getFilteredTodos(todos, filter);
 
-{  useEffect(() => {
-    if (!tempTodo && editingTodoIds.length === 0) {
-      inputRef.current?.focus();
-    }
-  }, [tempTodo, editingTodoIds]);}
+  {
+    useEffect(() => {
+      if (!tempTodo && editingTodoIds.length === 0) {
+        inputRef.current?.focus();
+      }
+    }, [tempTodo, editingTodoIds]);
+  }
 
   useEffect(() => {
     setError(null);
@@ -108,9 +116,13 @@ export const App: React.FC = () => {
   const handleToggleTodo = (todo: Todo) => {
     setEditingTodoIds(ids => [...ids, todo.id]);
 
-    updateTodo({ ...todo, completed: !todo.completed, })
+    updateTodo({ ...todo, completed: !todo.completed })
       .then(updatedTodo => {
-        setTodos(current => current.map(todo => todo.id === updatedTodo.id ? updatedTodo : todo,))
+        setTodos(current =>
+          current.map(todoItem =>
+            todoItem.id === updatedTodo.id ? updatedTodo : todoItem,
+          ),
+        );
       })
       .catch(() => {
         setError(ErrorMessage.UpdateTodo);
@@ -126,12 +138,14 @@ export const App: React.FC = () => {
     return updateTodo({ ...todo, title: newTitle })
       .then(updated => {
         setTodos(prevTodos =>
-          prevTodos.map(todo =>
-            todo.id === updated.id ? updated : todo),
+          prevTodos.map(todoItem =>
+            todoItem.id === updated.id ? updated : todoItem,
+          ),
         );
       })
       .catch(() => {
         setError(ErrorMessage.UpdateTodo);
+
         return Promise.reject();
       })
       .finally(() =>
@@ -157,7 +171,8 @@ export const App: React.FC = () => {
 
   const activeTodosCount = todos.filter(todo => !todo.completed).length;
   const hasCompletedTodos = todos.some(todo => todo.completed);
-  const hasAllCompletedTodos = todos.length > 0 && todos.every(todo => todo.completed);
+  const hasAllCompletedTodos =
+    todos.length > 0 && todos.every(todo => todo.completed);
 
   return (
     <div className="todoapp">
