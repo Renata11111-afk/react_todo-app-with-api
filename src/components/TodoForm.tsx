@@ -1,7 +1,7 @@
 type Props = {
   query: string;
   setQuery: (value: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   disabled: boolean;
   inputRef: React.RefObject<HTMLInputElement>;
 };

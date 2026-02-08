@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import cn from 'classnames';
 import { UserWarning } from './UserWarning';
 import {
   USER_ID,
@@ -13,7 +12,8 @@ import { Filter } from './types/Filter';
 import { ErrorMessage } from './types/ErrorMessage';
 import { TodoList } from './components/TodoList';
 import { TodoFooter } from './components/TodoFooter';
-import { TodoForm } from './components/TodoForm';
+import { Header } from './components/Header';
+import { ErrorNotification } from './components/ErrorNotification';
 
 function getFilteredTodos(todos: Todo[], filter: Filter): Todo[] {
   switch (filter) {
@@ -165,42 +165,34 @@ export const App: React.FC = () => {
     });
   };
 
+  const handleClearCompleatedTodos = () => {
+    todos
+    .filter(todo => todo.completed)
+    .forEach(todo => handleDeleteTodo(todo.id));
+  };
+
   if (!USER_ID) {
     return <UserWarning />;
   }
 
   const activeTodosCount = todos.filter(todo => !todo.completed).length;
   const hasCompletedTodos = todos.some(todo => todo.completed);
-  const hasAllCompletedTodos =
-    todos.length > 0 && todos.every(todo => todo.completed);
 
   return (
     <div className="todoapp">
       <h1 className="todoapp__title">todos</h1>
 
       <div className="todoapp__content">
-        <header className="todoapp__header">
-          {/* this button should have `active` class only if all todos are completed */}
-          {todos.length > 0 && (
-            <button
-              type="button"
-              className={cn('todoapp__toggle-all', {
-                active: hasAllCompletedTodos,
-              })}
-              data-cy="ToggleAllButton"
-              onClick={handleToggleAllTodos}
-            />
-          )}
 
-          {/* Add a todo on form submit */}
-          <TodoForm
-            query={query}
-            setQuery={setQuery}
-            onSubmit={handleAddTodo}
-            disabled={!!tempTodo}
-            inputRef={inputRef}
-          />
-        </header>
+        <Header
+          todos={todos}
+          tempTodo={tempTodo}
+          query={query}
+          setQuery={setQuery}
+          onSubmit={handleAddTodo}
+          inputRef={inputRef}
+          onClick={handleToggleAllTodos}
+        />
 
         <TodoList
           todos={filteredTodos}
@@ -217,35 +209,15 @@ export const App: React.FC = () => {
             filter={filter}
             setFilter={setFilter}
             hasCompletedTodos={hasCompletedTodos}
-            onClear={() => {
-              todos
-                .filter(todo => todo.completed)
-                .forEach(todo => handleDeleteTodo(todo.id));
-            }}
+            onClear={handleClearCompleatedTodos}
           />
         )}
       </div>
 
-      <div
-        data-cy="ErrorNotification"
-        className={cn(
-          'notification',
-          'is-danger',
-          'is-light',
-          'has-text-weight-normal',
-          {
-            hidden: !error,
-          },
-        )}
-      >
-        <button
-          data-cy="HideErrorButton"
-          type="button"
-          className="delete"
-          onClick={() => setError(null)}
-        />
-        {error}
-      </div>
+      <ErrorNotification
+        error={error}
+        onClick={() => setError(null)}
+      />
     </div>
   );
 };
